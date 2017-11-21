@@ -13,7 +13,7 @@ function onDisconnect (socket, reason) {
 module.exports.io = io
 
 module.exports.use = function (server) {
-  this.io = io(server)
+  this.io = io(server, { path: '/socketio/socket.io'})
 
   this.io.on('connection', function (socket) {
     console.log(socket.id)
