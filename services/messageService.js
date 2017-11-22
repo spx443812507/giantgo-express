@@ -1,23 +1,31 @@
 const pool = require('../db/mysql')
 const redis = require('../db/redis')
-const socket = require('../socket')
+const socketInstance = require('../socketFactory')
 
-module.exports.broadcast = function (command, data) {
-  let sql = 'SELECT * from listeners where command = :command'
-  let params = {command: command}
+module.exports = function MessageServiceModule () {
+  function MessageService () {
 
-  return new Promise(function (resolve, reject) {
-    pool.query(sql, params, function (err, rows, fields) {
-      if (err) {
-        reject(err)
-      }
+  }
 
-      for (let i = 0; i < rows.length; i++) {
-        socket.io.to(rows[i].fd).emit(command, data)
-        redis.RPUSH('messageLogs:' + rows[i].fd + ':' + command, JSON.stringify(data))
-      }
+  MessageService.prototype.broadcast = function (command, data) {
+    let sql = 'SELECT * from listeners where command = :command'
+    let params = {command: command}
 
-      resolve()
+    return new Promise(function (resolve, reject) {
+      pool.query(sql, params, function (err, rows, fields) {
+        if (err) {
+          reject(err)
+        }
+
+        for (let i = 0; i < rows.length; i++) {
+          socketInstance.io.to(rows[i].fd).emit(command, data)
+          redis.RPUSH('messageLogs:' + rows[i].fd + ':' + command, JSON.stringify(data))
+        }
+
+        resolve()
+      })
     })
-  })
+  }
+
+  return MessageService
 }

@@ -1,8 +1,9 @@
 const express = require('express')
 const router = express.Router()
-const {broadcast} = require('../controllers/messageController')
+const MessageController = require('../controllers/messageController')()
+const messageController = new MessageController()
 
 /* GET users listing. */
-router.post('/', broadcast)
+router.post('/', messageController.broadcast)
 
 module.exports = router
