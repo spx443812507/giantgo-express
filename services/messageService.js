@@ -1,6 +1,6 @@
 const pool = require('../db/mysql')
 const redis = require('../db/redis')
-const socketInstance = require('../socketFactory')
+const io = require('../db/socketEmitter')
 
 module.exports = function MessageServiceModule () {
   function MessageService () {
@@ -18,7 +18,7 @@ module.exports = function MessageServiceModule () {
         }
 
         for (let i = 0; i < rows.length; i++) {
-          socketInstance.io.to(rows[i].fd).emit(command, data)
+          io.to(rows[i].fd).emit(command, data)
           redis.RPUSH('messageLogs:' + rows[i].fd + ':' + command, JSON.stringify(data))
         }
 

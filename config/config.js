@@ -1,4 +1,5 @@
 module.exports = {
+  port: 3000,
   mysql: {
     host: 'localhost',
     user: 'root',
@@ -6,10 +7,5 @@ module.exports = {
     database: 'giantgo',
     connectionLimit: 100
   },
-  redis: {
-    host: 'localhost',
-    port: 6379,
-    db: 2,
-    password: 'sino@123'
-  }
+  redis: 'redis://user:sino@123@localhost:6379/2'
 }
