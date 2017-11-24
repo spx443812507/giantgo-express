@@ -1,47 +1,72 @@
 const pool = require('../db/mysql')
 const moment = require('moment')
+const async = require('async')
+const _ = require('lodash')
 
 module.exports = function SocketServiceModule () {
   function SocketService () {
 
   }
 
-  SocketService.prototype.subscribe = function (fd, command, params) {
+  SocketService.prototype.subscribe = function (socket, command) {
     return new Promise(function (resolve, reject) {
-      let sql = `INSERT INTO listeners(fd, command, params, created_at) SELECT :fd, :command, :params, :created_at 
-      FROM dual WHERE not exists (select * from listeners where fd = :fd AND command = :command)`
+      let sql = `INSERT INTO listeners(sid, command, created_at) SELECT :sid, :command, :created_at 
+      FROM dual WHERE not exists (select * from listeners where sid = :sid AND command = :command)`
 
-      let queryParams = {
-        fd: fd,
+      pool.query(sql, {
+        sid: socket.id,
         command: command,
-        params: JSON.stringify(params),
         created_at: moment().format('YYYY-MM-DD HH:mm:ss')
-      }
-
-      pool.query(sql, queryParams, function (err, rows, fields) {
+      }, function (err, rows, fields) {
         if (err) {
           reject(err)
         }
+
+        socket.join(command)
 
         resolve()
       })
     })
   }
 
-  SocketService.prototype.unSubscribe = function (fd, reason) {
+  SocketService.prototype.unSubscribe = function (socket, reason) {
     return new Promise(function (resolve, reject) {
-      const sql = `delete from listeners where fd = :fd`
+      async.series([
+        function (callback) {
+          pool.query(`select * from listeners where sid = :sid`, {
+            sid: socket.id
+          }, function (err, rows, fields) {
+            if (err) {
+              callback(err)
+            }
 
-      let queryParams = {
-        fd: fd
-      }
+            _.forEach(rows, function (row) {
+              socket.leave(row.command, function (err) {
+                console.log(err ? err : row.sid + '已退出')
+              })
+            })
 
-      pool.query(sql, queryParams, function (err, rows, fields) {
+            callback(null)
+          })
+        },
+        function (callback) {
+          pool.query(`update listeners set deleted_at = :deleted_at where sid = :sid`, {
+            sid: socket.id,
+            deleted_at: moment().format('YYYY-MM-DD HH:mm:ss')
+          }, function (err, rows, fields) {
+            if (err) {
+              callback(err)
+            }
+
+            callback(null)
+          })
+        }
+      ], function (err, results) {
         if (err) {
           reject(err)
+        } else {
+          resolve()
         }
-
-        resolve()
       })
     })
   }

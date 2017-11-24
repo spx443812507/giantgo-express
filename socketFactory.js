@@ -9,7 +9,7 @@ function SocketFactory () {
 }
 
 SocketFactory.prototype.use = function (server) {
-  io = io(server, {path: '/socketio/socket.io'})
+  io = io(server, {path: '/socketio/socket.io', transports: ['websocket', 'polling']})
 
   io.adapter(redis(redisConfig))
 
@@ -29,11 +29,15 @@ SocketFactory.prototype.use = function (server) {
 }
 
 function onSubscribe (socket, data) {
-  socketService.subscribe(socket.id, data.command, data.params)
+  socketService.subscribe(socket, data.command, data.params)
 }
 
 function onDisconnect (socket, reason) {
-  socketService.unSubscribe(socket.id, reason)
+  socketService.unSubscribe(socket, reason).then(function () {
+
+  }, function (err) {
+    console.log(err)
+  })
 }
 
 module.exports = new SocketFactory()
