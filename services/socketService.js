@@ -26,11 +26,14 @@ module.exports = function SocketServiceModule () {
     }))
 
     return new Promise(function (resolve, reject) {
-      let sql = `INSERT INTO subscribes(namespace, command, created_at) SELECT :namespace, :command, :created_at 
-      FROM dual WHERE not exists (select * from subscribes where namespace = :namespace AND command = :command)`
+      let sql = `INSERT INTO subscribes(namespace, room, command, created_at) 
+      SELECT :namespace, :room, :command, :created_at 
+      FROM dual WHERE not exists 
+      (select * from subscribes where namespace = :namespace AND room = :room AND command = :command)`
 
       pool.query(sql, {
         namespace: namespace,
+        room: room,
         command: command,
         created_at: moment().format('YYYY-MM-DD HH:mm:ss')
       }, function (err, rows, fields) {

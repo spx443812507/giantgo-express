@@ -8,9 +8,11 @@ module.exports = function CommandControllerModule () {
 
   CommandController.prototype.broadcast = function (req, res, next) {
     const command = req.body.command
+    const room = req.body.room
+    const namespace = req.body.namespace
     const data = req.body.data
 
-    commandService.broadcast(command, data).then(function (data) {
+    commandService.broadcast(command, data, namespace, room).then(function (data) {
       res.json(data)
     }, function (err) {
       res.send(err)

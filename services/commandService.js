@@ -8,19 +8,30 @@ module.exports = function CommandServiceModule () {
 
   }
 
-  CommandService.prototype.broadcast = function (command, data) {
+  CommandService.prototype.broadcast = function (command, data, namespace, room) {
     return new Promise(function (resolve, reject) {
       let sql = 'SELECT * FROM subscribes WHERE command = :command'
-
-      pool.query(sql, {
+      let params = {
         command: command
-      }, function (err, rows, fields) {
+      }
+
+      if (namespace) {
+        sql += ' AND namespace = :namespace'
+        params.namespace = namespace
+      }
+
+      if (room) {
+        sql += ' AND room = :room'
+        params.room = room
+      }
+
+      pool.query(sql, params, function (err, rows, fields) {
         if (err) {
           reject(err)
         }
 
         _.forEach(rows, function (row) {
-          io.of(row.namespace).to(row.command).emit(command, data)
+          io.of(row.namespace).to(row.room || row.command).emit(command, data)
           redis.RPUSH('logs:command:' + command, JSON.stringify(data))
         })
 
