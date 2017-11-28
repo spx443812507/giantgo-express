@@ -1,9 +1,5 @@
-var express = require('express');
-var router = express.Router();
+const commands = require('./commands')
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.json({title: 'title123'})
-});
-
-module.exports = router;
+module.exports = function RouterModule (app) {
+  app.use('/cmd', commands)
+}
