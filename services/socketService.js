@@ -1,14 +1,9 @@
 const pool = require('../db/mysql')
 const redis = require('../db/redis')
 const moment = require('moment')
-const async = require('async')
 
 module.exports = function SocketServiceModule () {
   function SocketService () {
-
-  }
-
-  SocketService.prototype.onMessage = function () {
 
   }
 

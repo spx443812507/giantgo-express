@@ -31,11 +31,30 @@ module.exports = function CommandServiceModule () {
         }
 
         _.forEach(rows, function (row) {
-          io.of(row.namespace).to(row.room || row.command).emit(command, data)
-          redis.RPUSH('logs:command:' + command, JSON.stringify(data))
+          if (row.room) {
+            io.of(row.namespace).to(row.room).emit(row.command, data)
+            redis.rpush('logs:namespace:' + row.namespace + ':room:' + row.room + ':command:' + command, JSON.stringify(data))
+          } else {
+            io.of(row.namespace).emit(row.command, data)
+            redis.rpush('logs:namespace:' + row.namespace + ':command:' + command, JSON.stringify(data))
+          }
         })
 
         resolve()
+      })
+    })
+  }
+
+  CommandService.prototype.getCommandList = function () {
+    return new Promise(function (resolve, reject) {
+      let sql = 'SELECT * FROM subscribes'
+
+      pool.query(sql, {}, function (err, rows, fields) {
+        if (err) {
+          reject(err)
+        }
+
+        resolve(rows)
       })
     })
   }

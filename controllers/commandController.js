@@ -19,5 +19,15 @@ module.exports = function CommandControllerModule () {
     })
   }
 
+  CommandController.prototype.getCommandList = function (req, res, next) {
+    commandService.getCommandList().then(function (data) {
+      console.log(req.app.settings.port)
+
+      res.json(data)
+    }, function (err) {
+      res.send(err)
+    })
+  }
+
   return CommandController
 }

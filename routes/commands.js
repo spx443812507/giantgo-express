@@ -5,5 +5,6 @@ const commandController = new CommandController()
 
 /* GET users listing. */
 router.post('/', commandController.broadcast)
+router.get('/', commandController.getCommandList)
 
 module.exports = router

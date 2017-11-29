@@ -4,22 +4,27 @@ const socketService = new SocketService()
 module.exports = function SocketControllerModule () {
   function SocketController (socket, io) {
     const self = this
-    const room = socket.handshake.query.room
 
     //当前socket实例
     self.socket = socket
     //链接池实例
     self.io = io
+    //命名空间
+    self.namespace = socket.nsp.name
+    //房间名
+    self.room = socket.handshake.query.room
 
     console.log('客户端：' + socket.id + '已连接')
 
-    if (room) {
-      socket.join(room)
+    if (self.room) {
+      socket.join(self.room)
     }
 
     self.socket.on('subscribe', self.onSubscribe.bind(self))
 
     self.socket.on('message', self.onMessage.bind(self))
+
+    self.socket.on('publish', self.onPublish.bind(self))
 
     self.socket.on('disconnect', self.onDisconnect.bind(self))
   }
@@ -35,7 +40,7 @@ module.exports = function SocketControllerModule () {
   }
 
   /**
-   * 接收到消息时间
+   * 接收到消息事件
    * @param message
    * {
    *    to: {
@@ -52,7 +57,15 @@ module.exports = function SocketControllerModule () {
 
     console.log('客户端：' + self.socket.id + ' 广播消息：' + message)
 
-    self.socket.broadcast.emit('message', content)
+    self.io.of(self.namespace).to(self.room).emit('message', content)
+  }
+
+  SocketController.prototype.onPublish = function (command, data) {
+    const self = this
+
+    self.io.of(self.namespace).to(self.room).emit(command, data)
+
+    console.log('客户端：' + self.socket.id + ' 发布命令：' + command)
   }
 
   SocketController.prototype.onDisconnect = function (reason) {
