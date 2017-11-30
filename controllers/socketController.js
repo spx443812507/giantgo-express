@@ -11,22 +11,16 @@ module.exports = function SocketControllerModule () {
     self.io = io
     //命名空间
     self.namespace = socket.nsp.name
-    //房间名
-    self.room = socket.handshake.query.room
 
-    console.log('客户端：' + socket.id + '已连接')
+    try {
+      self.socket.on('subscribe', self.onSubscribe.bind(self))
 
-    if (self.room) {
-      socket.join(self.room)
+      self.socket.on('publish', self.onPublish.bind(self))
+
+      self.socket.on('disconnect', self.onDisconnect.bind(self))
+    } catch (e) {
+      console.log(e)
     }
-
-    self.socket.on('subscribe', self.onSubscribe.bind(self))
-
-    self.socket.on('message', self.onMessage.bind(self))
-
-    self.socket.on('publish', self.onPublish.bind(self))
-
-    self.socket.on('disconnect', self.onDisconnect.bind(self))
   }
 
   SocketController.prototype.onSubscribe = function (data) {
@@ -34,38 +28,15 @@ module.exports = function SocketControllerModule () {
 
     console.log('客户端：' + self.socket.id + ' 订阅命令：' + data.command)
 
-    socketService.subscribe(self.socket, data).then(function () {
-      self.socket.join(data.command)
-    })
+    socketService.subscribe(self.socket, data)
   }
 
-  /**
-   * 接收到消息事件
-   * @param message
-   * {
-   *    to: {
-   *      type: 'room', //namespace, room, socket
-   *      target:
-   *    }
-   * }
-   */
-  SocketController.prototype.onMessage = function (message) {
+  SocketController.prototype.onPublish = function (packet) {
     const self = this
-    const rooms = Object.keys(self.socket.rooms)
-    const to = message.to
-    const content = message.content
-
-    console.log('客户端：' + self.socket.id + ' 广播消息：' + message)
-
-    self.io.of(self.namespace).to(self.room).emit('message', content)
-  }
-
-  SocketController.prototype.onPublish = function (command, data) {
-    const self = this
-
-    self.io.of(self.namespace).to(self.room).emit(command, data)
 
     console.log('客户端：' + self.socket.id + ' 发布命令：' + command)
+
+    self.io.of(packet.namespace).to(packet.room || packet.command).emit(packet.command, packet.data)
   }
 
   SocketController.prototype.onDisconnect = function (reason) {

@@ -12,21 +12,12 @@ module.exports = function CommandControllerModule () {
     const namespace = req.body.namespace
     const data = req.body.data
 
-    commandService.broadcast(command, data, namespace, room).then(function (data) {
-      res.json(data)
-    }, function (err) {
-      res.send(err)
-    })
-  }
-
-  CommandController.prototype.getCommandList = function (req, res, next) {
-    commandService.getCommandList().then(function (data) {
-      console.log(req.app.settings.port)
-
-      res.json(data)
-    }, function (err) {
-      res.send(err)
-    })
+    try {
+      commandService.broadcast(command, data, namespace, room)
+      res.json('success')
+    } catch (e) {
+      res.send(e)
+    }
   }
 
   return CommandController
