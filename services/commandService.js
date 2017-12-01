@@ -1,7 +1,5 @@
 const redis = require('../db/redis')
-const pool = require('../db/mysql')
-const _ = require('lodash')
-const io = require('../socket').io
+const io = require('socket.io-emitter')(require('../config/config').redis)
 
 module.exports = function CommandServiceModule () {
   function CommandService () {

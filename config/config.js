@@ -1,5 +1,6 @@
 module.exports = {
-  port: 3000,
+  port: 300,
+  socketPath: '/socketio/socket.io',
   mysql: {
     host: 'localhost',
     user: 'root',
