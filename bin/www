@@ -7,10 +7,8 @@
 const app = require('../app')
 const debug = require('debug')('giantgo-express:server')
 const http = require('http')
-let io = require('socket.io')
-const redis = require('socket.io-redis')
 const config = require('../config/config')
-const socketFactory = require('../socketFactory')
+const socketApp = require('../socketApp')
 
 /**
  * Get port from environment and store in Express.
@@ -29,9 +27,7 @@ const server = http.createServer(app)
 /**
  * Listen on provided port, on all network interfaces.
  */
-io = io(server, {path: config.socketPath})
-io.adapter(redis(config.redis))
-socketFactory(io)
+socketApp.adapter(server)
 
 server.listen(port)
 server.on('error', onError)

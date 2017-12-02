@@ -1,5 +1,4 @@
-const CommandService = require('../services/commandService')()
-const commandService = new CommandService()
+const webinarController = require('./webinarController')
 
 module.exports = function CommandControllerModule () {
   function CommandController () {
@@ -7,13 +6,13 @@ module.exports = function CommandControllerModule () {
   }
 
   CommandController.prototype.broadcast = function (req, res, next) {
-    const command = req.body.command
-    const room = req.body.room
-    const namespace = req.body.namespace
-    const data = req.body.data
-
     try {
-      commandService.broadcast(command, data, namespace, room)
+      webinarController.publish({
+        command: req.body.command,
+        room: req.body.room,
+        namespace: req.body.namespace,
+        data: req.body.data
+      })
       res.json('success')
     } catch (e) {
       res.send(e)

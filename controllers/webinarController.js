@@ -1,16 +1,22 @@
-const SocketBaseController = require('./socketBaseController')
+const socketBaseHandler = require('./socketBaseHandler')
 
-function WebinarController (socket) {
-  const self = this
+function WebinarController () {
 
-  SocketBaseController.call(self, socket)
-
-  console.log('客户端：' + self.socket.id + '已连接，命名空间' + socket.nsp.name)
 }
 
-WebinarController.namespace = '/webinar'
+WebinarController.prototype = socketBaseHandler
 
-const proto = WebinarController.prototype = SocketBaseController.prototype
-proto.constructor = WebinarController
+const webinarController = new WebinarController()
 
-module.exports = WebinarController
+webinarController.subscribeHandlers.userJoin = function (data) {
+  const self = this
+
+}
+
+webinarController.publishHandlers.userJoin = function (data) {
+  const self = this
+
+  self.io.of(self.namespace).to(data.room || data.command).emit(data.command, data.data)
+}
+
+module.exports = webinarController

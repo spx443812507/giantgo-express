@@ -1,0 +1,36 @@
+{
+  "config": {
+    "target": "ws://localhost/webinar",
+    "socketio": {
+      "query": null,
+      "path": "/socketio/socket.io"
+    },
+    "phases": [
+      {
+        "duration": 600,
+        "arrivalRate": 5
+      }
+    ]
+  },
+  "scenarios": [
+    {
+      "engine": "socketio",
+      "flow": [
+        {
+          "loop": [
+            {
+              "emit": {
+                "channel": "subscribe",
+                "data": "{\"room\":\"room11\",\"command\":\"onUserJoin\"}"
+              }
+            },
+            {
+              "think": 1
+            }
+          ],
+          "count": 50
+        }
+      ]
+    }
+  ]
+}
