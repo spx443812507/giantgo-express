@@ -19,21 +19,23 @@ SocketFactory.prototype.adapter = function (server) {
   self.io.adapter(redis(config.redis))
 
   _.forEach(self.handlers, function (handler) {
-    self.io.of(handler.namespace).on('connection', handler.controller.onConnection.bind(handler.controller))
+    self.io.of(handler.namespace).on('connection', function (socket) {
+      new handler.controller(socket)
+    })
   })
 }
 
 /**
  * 注册命名空间
- * @param namespace           命名空间名称
- * @param controllerInstance  控制器实例
+ * @param namespace   命名空间名称
+ * @param controller  控制器
  */
-SocketFactory.prototype.use = function (namespace, controllerInstance) {
+SocketFactory.prototype.use = function (namespace, controller) {
   const self = this
 
   self.handlers.push({
     namespace: namespace,
-    controller: controllerInstance
+    controller: controller
   })
 }
 

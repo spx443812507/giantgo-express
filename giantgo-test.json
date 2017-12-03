@@ -1,14 +1,14 @@
 {
   "config": {
-    "target": "ws://localhost/webinar",
+    "target": "http://localhost",
     "socketio": {
-      "query": null,
+      "query": "",
       "path": "/socketio/socket.io"
     },
     "phases": [
       {
-        "duration": 600,
-        "arrivalRate": 5
+        "duration": 30,
+        "arrivalRate": 2
       }
     ]
   },
@@ -17,18 +17,33 @@
       "engine": "socketio",
       "flow": [
         {
-          "loop": [
-            {
-              "emit": {
-                "channel": "subscribe",
-                "data": "{\"room\":\"room11\",\"command\":\"onUserJoin\"}"
+          "emit": {
+            "channel": "subscribe",
+            "data": {
+              "room": "room11",
+              "command": "userJoin"
+            },
+            "namespace": "/webinar"
+          }
+        },
+        {
+          "think": 1
+        },
+        {
+          "emit": {
+            "channel": "publish",
+            "data": {
+              "room": "room11",
+              "command": "userJoin",
+              "data": {
+                "name": "name-{{$randomString()}}"
               }
             },
-            {
-              "think": 1
-            }
-          ],
-          "count": 50
+            "namespace": "/webinar"
+          }
+        },
+        {
+          "think": 20
         }
       ]
     }

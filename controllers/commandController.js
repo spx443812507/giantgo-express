@@ -1,4 +1,5 @@
-const webinarController = require('./webinarController')
+const redis = require('../db/redis')
+const io = require('socket.io-emitter')(require('../config/config').redis)
 
 module.exports = function CommandControllerModule () {
   function CommandController () {
@@ -6,13 +7,16 @@ module.exports = function CommandControllerModule () {
   }
 
   CommandController.prototype.broadcast = function (req, res, next) {
+    const command = req.body.command
+    const room = req.body.room
+    const namespace = req.body.namespace
+    const data = req.body.data
+
     try {
-      webinarController.publish({
-        command: req.body.command,
-        room: req.body.room,
-        namespace: req.body.namespace,
-        data: req.body.data
-      })
+      io.of(namespace || '/').to(room || command).emit(command, data)
+
+      redis.rpush('logs:command:' + command, JSON.stringify(data))
+
       res.json('success')
     } catch (e) {
       res.send(e)

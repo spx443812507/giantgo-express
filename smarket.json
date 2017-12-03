@@ -1,0 +1,64 @@
+{
+  "config": {
+    "target": "http://uat-webinarbinteract.smarket.net.cn",
+    "socketio": {
+      "path": "/socket.io"
+    },
+    "phases": [
+      {
+        "duration": 30,
+        "arrivalRate": 2
+      }
+    ]
+  },
+  "scenarios": [
+    {
+      "engine": "socketio",
+      "flow": [
+        {
+          "emit": {
+            "channel": "emitSocket",
+            "data": {
+              "size": 0,
+              "orn": "",
+              "dst": "",
+              "type": "0x0002",
+              "cmd": "onUserJoin",
+              "seq": 0,
+              "var": 1000,
+              "body": {
+                "head": {
+                  "webinarId": "3916",
+                  "userid": "userid-{{$randomString()}}",
+                  "username": "username-{{$randomString()}}",
+                  "useremail": "useremail-{{$randomString()}}",
+                  "clientType": "pc",
+                  "isGag": false,
+                  "role": "0",
+                  "webcastid": "13bc43a2abf14c8bbc2180b4a48b7e77",
+                  "mobile": "mobile-{{$randomString()}}",
+                  "company": "company-{{$randomString()}}",
+                  "position": null,
+                  "isNewRecognition": 1
+                },
+                "data": {
+                  "clientType": "pc",
+                  "company": "company-{{$randomString()}}",
+                  "email": "useremail-{{$randomString()}}",
+                  "mobile": "mobile-{{$randomString()}}",
+                  "role": "0",
+                  "userName": "username-{{$randomString()}}",
+                  "userid": "userid-{{$randomString()}}"
+                }
+              }
+            },
+            "namespace": "/center"
+          }
+        },
+        {
+          "think": 20
+        }
+      ]
+    }
+  ]
+}

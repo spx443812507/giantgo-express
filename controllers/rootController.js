@@ -1,11 +1,11 @@
 const socketBaseHandler = require('./socketBaseHandler')
 
 function RootController (socket) {
+  const self = this
 
+  self.onConnection(socket)
 }
 
 RootController.prototype = socketBaseHandler
 
-const rootController = new RootController()
-
-module.exports = rootController
+module.exports = RootController

@@ -14,7 +14,7 @@ module.exports = {
     self.socket = socket
     self.namespace = socket.nsp.name
 
-    console.log('客户端：' + socket.id + '已连接，命名空间' + socket.nsp.name)
+    console.log('客户端：' + self.socket.id + '已连接，命名空间' + self.socket.nsp.name)
 
     try {
       self.socket.on('subscribe', self.subscribe.bind(self))
@@ -28,6 +28,15 @@ module.exports = {
   },
   subscribe: function (data) {
     const self = this
+
+    if (Object.prototype.toString.call(data) === '[object String]') {
+      try {
+        data = JSON.parse(data)
+      } catch (e) {
+        throw 'param format is not correct (example: {room: "userRoom", command: "userJoin"})'
+      }
+    }
+
     const command = data.command
     const room = data.room || data.command
 
@@ -49,14 +58,24 @@ module.exports = {
   },
   publish: function (data) {
     const self = this
+
+    if (Object.prototype.toString.call(data) === '[object String]') {
+      try {
+        data = JSON.parse(data)
+      } catch (e) {
+        throw 'param format is not correct (example: {room: "room1", command: "userJoin", namespace: "/"})'
+      }
+    }
+
     const command = data.command
     const room = data.room
+    const namespace = data.namespace || self.namespace
 
     console.log('客户端：' + self.socket.id + ' 发布命令：' + data.command)
 
-    redis.rpush('logs:room:' + room + 'socket:' + self.socket.id, JSON.stringify({
+    redis.rpush('logs:room:' + room + ':socket:' + self.socket.id, JSON.stringify({
       type: 'publish',
-      namespace: self.namespace,
+      namespace: namespace,
       command: command,
       room: room,
       date: moment().format('YYYY-MM-DD HH:mm:ss')
@@ -64,6 +83,8 @@ module.exports = {
 
     if (self.publishHandlers && self.publishHandlers.hasOwnProperty(command)) {
       self.publishHandlers[command].call(self, data)
+    } else {
+      self.io.of(namespace).to(data.room || data.command).emit(data.command, data.data)
     }
   },
   disconnect: function (reason) {
