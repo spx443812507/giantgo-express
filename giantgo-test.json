@@ -1,14 +1,14 @@
 {
   "config": {
-    "target": "http://localhost",
+    "target": "ws://localhost",
     "socketio": {
       "query": "",
       "path": "/socketio/socket.io"
     },
     "phases": [
       {
-        "duration": 30,
-        "arrivalRate": 2
+        "duration": 300,
+        "arrivalRate": 10
       }
     ]
   },
@@ -43,7 +43,7 @@
           }
         },
         {
-          "think": 20
+          "think": 310
         }
       ]
     }

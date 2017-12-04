@@ -5,7 +5,7 @@ const ioEmitter = require('socket.io-emitter')(require('../config/config').redis
 module.exports = {
   io: ioEmitter,
   socket: null,
-  namespace: null,
+  namespace: '/',
   subscribeHandlers: {},
   publishHandlers: {},
   onConnection: function (socket) {
@@ -38,7 +38,7 @@ module.exports = {
     }
 
     const command = data.command
-    const room = data.room || data.command
+    const room = data.room || command
 
     console.log('客户端：' + self.socket.id + ' 订阅命令：' + data.command)
 
