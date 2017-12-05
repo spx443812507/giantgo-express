@@ -6,8 +6,6 @@ function WebinarController (socket) {
   self.onConnection(socket)
 
   self.subscribeHandlers.userJoin = function (data) {
-    const self = this
-
   }
 
   self.publishHandlers.userJoin = function (data) {

@@ -6,21 +6,24 @@ const _ = require('lodash')
 function SocketFactory () {
   const self = this
 
-  //socket.io实例
+  // socket.io实例
   self.io = null
-  //注册的命名空间
+  // 注册的命名空间
   self.handlers = []
 }
 
 SocketFactory.prototype.adapter = function (server) {
   const self = this
 
-  self.io = io(server, {path: config.socketPath})
+  self.io = io(server, {
+    path: config.socketPath
+  })
   self.io.adapter(redis(config.redis))
 
   _.forEach(self.handlers, function (handler) {
     self.io.of(handler.namespace).on('connection', function (socket) {
-      new handler.controller(socket)
+      const controller = new handler.Controller(socket)
+      console.log(controller)
     })
   })
 }
@@ -35,7 +38,7 @@ SocketFactory.prototype.use = function (namespace, controller) {
 
   self.handlers.push({
     namespace: namespace,
-    controller: controller
+    Controller: controller
   })
 }
 

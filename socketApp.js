@@ -8,4 +8,3 @@ socketFactory.use('/', rootController)
 socketFactory.use('/webinar', webinarController)
 
 module.exports = socketFactory
-

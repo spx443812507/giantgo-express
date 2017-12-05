@@ -1,5 +1,6 @@
 const redis = require('../db/redis')
 const moment = require('moment')
+const Exception = require('./exception')
 const ioEmitter = require('socket.io-emitter')(require('../config/config').redis)
 
 module.exports = {
@@ -33,7 +34,7 @@ module.exports = {
       try {
         data = JSON.parse(data)
       } catch (e) {
-        throw 'param format is not correct (example: {room: "userRoom", command: "userJoin"})'
+        throw new Exception(400, 'param format is not correct (example: {room: "room1", command: "userJoin", namespace: "/"})')
       }
     }
 
@@ -63,7 +64,7 @@ module.exports = {
       try {
         data = JSON.parse(data)
       } catch (e) {
-        throw 'param format is not correct (example: {room: "room1", command: "userJoin", namespace: "/"})'
+        throw new Exception(400, 'param format is not correct (example: {room: "room1", command: "userJoin", namespace: "/"})')
       }
     }
 
