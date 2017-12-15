@@ -22,8 +22,7 @@ SocketFactory.prototype.adapter = function (server) {
 
   _.forEach(self.handlers, function (handler) {
     self.io.of(handler.namespace).on('connection', function (socket) {
-      const controller = new handler.Controller(socket)
-      console.log(controller)
+      new handler.Controller(socket)
     })
   })
 }
