@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const CommandController = require('../controllers/commandController')()
+const CommandController = require('../controllers/commandController')
 const commandController = new CommandController()
 
 /* GET users listing. */
