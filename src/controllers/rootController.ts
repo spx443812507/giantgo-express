@@ -1,11 +1,8 @@
-const socketBaseHandler = require('./socketBaseHandler')
+import SocketBaseHandler from './socketBaseHandler';
 
-function RootController (socket) {
-  const self = this
-
-  self.onConnection(socket)
+export default class RootController extends SocketBaseHandler {
+  constructor(socket: any) {
+    super();
+    this.onConnection(socket);
+  }
 }
-
-RootController.prototype = socketBaseHandler
-
-module.exports = RootController

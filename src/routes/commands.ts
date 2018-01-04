@@ -1,9 +1,10 @@
-const express = require('express')
-const router = express.Router()
-const CommandController = require('../controllers/commandController')
-const commandController = new CommandController()
+import * as express from 'express';
+import CommandController from '../controllers/commandController';
+
+const router = express.Router();
+const commandController = new CommandController();
 
 /* GET users listing. */
-router.post('/', commandController.broadcast)
+router.post('/', commandController.broadcast);
 
-module.exports = router
+export default router;

@@ -1,10 +1,11 @@
-const SocketFactory = require('./socketFactory')
-const socketFactory = new SocketFactory()
+import SocketFactory from './socketFactory';
 
-const webinarController = require('./controllers/webinarController')
-const rootController = require('./controllers/rootController')
+const socketFactory = new SocketFactory();
 
-socketFactory.use('/', rootController)
-socketFactory.use('/webinar', webinarController)
+const webinarController = require('./controllers/webinarController');
+const rootController = require('./controllers/rootController');
 
-module.exports = socketFactory
+socketFactory.use('/', rootController);
+socketFactory.use('/webinar', webinarController);
+
+export default socketFactory;

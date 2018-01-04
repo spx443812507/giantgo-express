@@ -1,5 +1,7 @@
-const redis = require('redis')
-const redisConfig = require('../config/config').redis
-const client = redis.createClient(redisConfig)
+import * as redis from 'redis';
+import * as config from '../config/config';
+import { RedisClient } from 'redis';
 
-module.exports = client
+const client: RedisClient = redis.createClient(config.redis);
+
+export default client;

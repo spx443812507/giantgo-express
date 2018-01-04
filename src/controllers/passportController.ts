@@ -1,21 +1,19 @@
-const jwt = require('jsonwebtoken')
-const config = require('../config/config')
-const User = require('../models/user')
+import * as jwt from 'jsonwebtoken';
+import config from '../config/config';
+import User from '../models/user';
 
-class PassportController {
-  signUp () {
+export default class PassportController {
+  signUp() {
     User.create({
       name: 'spx',
       email: 'spx123456@foxmail.com',
       mobile: '15930181489'
-    }, (err, user) => {
+    }, (err: any, user: any) => {
       if (err) {
-        throw 'lala'
+        throw 'lala';
       }
 
-      jwt.sign(user, config.jwtSecret)
-    })
+      jwt.sign(user, config.jwtSecret);
+    });
   }
 }
-
-module.exports = PassportController

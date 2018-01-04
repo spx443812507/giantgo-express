@@ -1,16 +1,19 @@
-const redis = require('../db/redis')
-const io = require('socket.io-emitter')(require('../config/config').redis)
+import * as redis from '../db/redis';
+import * as config from '../config/config';
+import * as emitter from 'socket.io-emitter';
 
-module.exports = function CommandServiceModule () {
-  function CommandService () {
+const io = emitter(config.redis);
+
+module.exports = function CommandServiceModule() {
+  function CommandService() {
 
   }
 
   CommandService.prototype.broadcast = function (command, data, namespace, room) {
-    io.of(namespace || '/').to(room || command).emit(command, data)
+    io.of(namespace || '/').to(room || command).emit(command, data);
 
-    redis.rpush('logs:command:' + command, JSON.stringify(data))
-  }
+    redis.rpush('logs:command:' + command, JSON.stringify(data));
+  };
 
-  return CommandService
-}
+  return CommandService;
+};

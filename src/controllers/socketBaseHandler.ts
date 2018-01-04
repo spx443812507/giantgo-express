@@ -1,102 +1,103 @@
-const redis = require('../db/redis')
-const moment = require('moment')
-const Exception = require('./exception')
-const ioEmitter = require('socket.io-emitter')(require('../config/config').redis)
+import * as emitter from 'socket.io-emitter';
+import * as moment from 'moment';
+import * as redis from '../db/redis';
+import * as config from '../config/config';
 
-module.exports = {
-  io: ioEmitter,
-  socket: null,
-  namespace: '/',
-  subscribeHandlers: {},
-  publishHandlers: {},
-  onConnection: function (socket) {
-    const self = this
+interface HandlerObject {
+  [index: string]: any;
+}
 
-    self.socket = socket
-    self.namespace = socket.nsp.name
+export default class SocketBaseHandler {
+  io: any;
+  socket: any;
+  namespace: string;
+  subscribeHandlers: HandlerObject;
+  publishHandlers: HandlerObject;
+  constructor() {
+    this.io = emitter(config.redis);
+    this.subscribeHandlers = {};
+    this.publishHandlers = {};
+  }
+  onConnection(socket: any) {
+    this.socket = socket;
+    this.namespace = socket.nsp.name;
 
-    console.log('客户端：' + self.socket.id + '已连接，命名空间' + self.socket.nsp.name)
+    console.log('客户端：' + this.socket.id + '已连接，命名空间' + this.socket.nsp.name);
 
     try {
-      self.socket.on('subscribe', self.subscribe.bind(self))
+      this.socket.on('subscribe', this.subscribe.bind(this));
 
-      self.socket.on('publish', self.publish.bind(self))
+      this.socket.on('publish', this.publish.bind(this));
 
-      self.socket.on('disconnect', self.disconnect.bind(self))
+      this.socket.on('disconnect', this.disconnect.bind(this));
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
-  },
-  subscribe: function (data) {
-    const self = this
-
+  }
+  subscribe(data: any) {
     if (Object.prototype.toString.call(data) === '[object String]') {
       try {
-        data = JSON.parse(data)
+        data = JSON.parse(data);
       } catch (e) {
-        throw new Exception(400, 'param format is not correct (example: {room: "room1", command: "userJoin", namespace: "/"})')
+        throw 'param format is not correct (example: {room: "room1", command: "userJoin", namespace: "/"})';
       }
     }
 
-    const command = data.command
-    const room = data.room || command
+    const command = data.command;
+    const room = data.room || command;
 
-    console.log('客户端：' + self.socket.id + ' 订阅命令：' + data.command)
+    console.log('客户端：' + this.socket.id + ' 订阅命令：' + data.command);
 
-    self.socket.join(room)
+    this.socket.join(room);
 
-    redis.rpush('logs:room:' + room + ':socket:' + self.socket.id, JSON.stringify({
+    redis.rpush('logs:room:' + room + ':socket:' + this.socket.id, JSON.stringify({
       type: 'subscribe',
-      namespace: self.namespace,
+      namespace: this.namespace,
       command: command,
       room: room,
       date: moment().format('YYYY-MM-DD HH:mm:ss')
-    }))
+    }));
 
-    if (self.subscribeHandlers && self.subscribeHandlers.hasOwnProperty(command)) {
-      self.subscribeHandlers[command].call(self, data)
+    if (this.subscribeHandlers && this.subscribeHandlers.hasOwnProperty(command)) {
+      this.subscribeHandlers[command].call(this, data);
     }
-  },
-  publish: function (data) {
-    const self = this
-
+  }
+  publish(data: any) {
     if (Object.prototype.toString.call(data) === '[object String]') {
       try {
-        data = JSON.parse(data)
+        data = JSON.parse(data);
       } catch (e) {
-        throw new Exception(400, 'param format is not correct (example: {room: "room1", command: "userJoin", namespace: "/"})')
+        throw 'param format is not correct (example: {room: "room1", command: "userJoin", namespace: "/"})';
       }
     }
 
-    const command = data.command
-    const room = data.room
-    const namespace = data.namespace || self.namespace
+    const command = data.command;
+    const room = data.room;
+    const namespace = data.namespace || this.namespace;
 
-    console.log('客户端：' + self.socket.id + ' 发布命令：' + data.command)
+    console.log('客户端：' + this.socket.id + ' 发布命令：' + data.command);
 
-    redis.rpush('logs:room:' + room + ':socket:' + self.socket.id, JSON.stringify({
+    redis.rpush('logs:room:' + room + ':socket:' + this.socket.id, JSON.stringify({
       type: 'publish',
       namespace: namespace,
       command: command,
       room: room,
       date: moment().format('YYYY-MM-DD HH:mm:ss')
-    }))
+    }));
 
-    if (self.publishHandlers && self.publishHandlers.hasOwnProperty(command)) {
-      self.publishHandlers[command].call(self, data)
+    if (this.publishHandlers && this.publishHandlers.hasOwnProperty(command)) {
+      this.publishHandlers[command].call(this, data);
     } else {
-      self.io.of(namespace).to(data.room || data.command).emit(data.command, data.data)
+      this.io.of(namespace).to(data.room || data.command).emit(data.command, data.data);
     }
-  },
-  disconnect: function (reason) {
-    const self = this
+  }
+  disconnect(reason: string) {
+    console.log('客户端：' + this.socket.id + '断开连接');
 
-    console.log('客户端：' + self.socket.id + '断开连接')
-
-    redis.rpush('logs:disconnect:socket:' + self.socket.id, JSON.stringify({
-      namespace: self.namespace,
+    redis.rpush('logs:disconnect:socket:' + this.socket.id, JSON.stringify({
+      namespace: this.namespace,
       reason: reason,
       date: moment().format('YYYY-MM-DD HH:mm:ss')
-    }))
+    }));
   }
 }

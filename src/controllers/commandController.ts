@@ -1,25 +1,24 @@
-const redis = require('../db/redis')
-const io = require('socket.io-emitter')(require('../config/config').redis)
+import * as emitter from 'socket.io-emitter';
+import * as redis from '../db/redis';
+import * as config from '../config/config';
 
-function CommandController () {
+const io = emitter(config.redis);
 
-}
+export default class CommandController {
+  broadcast(req: any, res: any, next: any) {
+    const command = req.body.command;
+    const room = req.body.room;
+    const namespace = req.body.namespace;
+    const data = req.body.data;
 
-CommandController.prototype.broadcast = function (req, res, next) {
-  const command = req.body.command
-  const room = req.body.room
-  const namespace = req.body.namespace
-  const data = req.body.data
+    try {
+      io.of(namespace || '/').to(room || command).emit(command, data);
 
-  try {
-    io.of(namespace || '/').to(room || command).emit(command, data)
+      redis.rpush('logs:command:' + command, JSON.stringify(data));
 
-    redis.rpush('logs:command:' + command, JSON.stringify(data))
-
-    res.json('success')
-  } catch (e) {
-    res.send(e)
+      res.json('success');
+    } catch (e) {
+      res.send(e);
+    }
   }
 }
-
-module.exports = CommandController
