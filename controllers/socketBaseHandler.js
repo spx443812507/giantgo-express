@@ -1,35 +1,36 @@
 const redis = require('../db/redis')
+const config = require('../config/config')
 const moment = require('moment')
 const Exception = require('./exception')
-const ioEmitter = require('socket.io-emitter')(require('../config/config').redis)
+const emitter = require('socket.io-emitter')
 
-module.exports = {
-  io: ioEmitter,
-  socket: null,
-  namespace: '/',
-  subscribeHandlers: {},
-  publishHandlers: {},
-  onConnection: function (socket) {
-    const self = this
+class SocketBaseHandler {
+  constructor () {
+    this.io = emitter(config.redis)
+    this.socket = undefined
+    this.namespace = '/'
+    this.subscribeHandlers = {}
+    this.publishHandlers = {}
+  }
 
-    self.socket = socket
-    self.namespace = socket.nsp.name
+  onConnection (socket) {
+    this.socket = socket
+    this.namespace = socket.nsp.name
 
-    console.log('客户端：' + self.socket.id + '已连接，命名空间' + self.socket.nsp.name)
+    console.log('客户端：' + this.socket.id + '已连接，命名空间' + this.socket.nsp.name)
 
     try {
-      self.socket.on('subscribe', self.subscribe.bind(self))
+      this.socket.on('subscribe', this.subscribe.bind(this))
 
-      self.socket.on('publish', self.publish.bind(self))
+      this.socket.on('publish', this.publish.bind(this))
 
-      self.socket.on('disconnect', self.disconnect.bind(self))
+      this.socket.on('disconnect', this.disconnect.bind(this))
     } catch (e) {
       console.log(e)
     }
-  },
-  subscribe: function (data) {
-    const self = this
+  }
 
+  subscribe (data) {
     if (Object.prototype.toString.call(data) === '[object String]') {
       try {
         data = JSON.parse(data)
@@ -41,25 +42,24 @@ module.exports = {
     const command = data.command
     const room = data.room || command
 
-    console.log('客户端：' + self.socket.id + ' 订阅命令：' + data.command)
+    console.log('客户端：' + this.socket.id + ' 订阅命令：' + data.command)
 
-    self.socket.join(room)
+    this.socket.join(room)
 
-    redis.rpush('logs:room:' + room + ':socket:' + self.socket.id, JSON.stringify({
+    redis.rpush('logs:room:' + room + ':socket:' + this.socket.id, JSON.stringify({
       type: 'subscribe',
-      namespace: self.namespace,
+      namespace: this.namespace,
       command: command,
       room: room,
       date: moment().format('YYYY-MM-DD HH:mm:ss')
     }))
 
-    if (self.subscribeHandlers && self.subscribeHandlers.hasOwnProperty(command)) {
-      self.subscribeHandlers[command].call(self, data)
+    if (this.subscribeHandlers && this.subscribeHandlers.hasOwnProperty(command)) {
+      this.subscribeHandlers[command].call(this, data)
     }
-  },
-  publish: function (data) {
-    const self = this
+  }
 
+  publish (data) {
     if (Object.prototype.toString.call(data) === '[object String]') {
       try {
         data = JSON.parse(data)
@@ -70,11 +70,11 @@ module.exports = {
 
     const command = data.command
     const room = data.room
-    const namespace = data.namespace || self.namespace
+    const namespace = data.namespace || this.namespace
 
-    console.log('客户端：' + self.socket.id + ' 发布命令：' + data.command)
+    console.log('客户端：' + this.socket.id + ' 发布命令：' + data.command)
 
-    redis.rpush('logs:room:' + room + ':socket:' + self.socket.id, JSON.stringify({
+    redis.rpush('logs:room:' + room + ':socket:' + this.socket.id, JSON.stringify({
       type: 'publish',
       namespace: namespace,
       command: command,
@@ -82,21 +82,22 @@ module.exports = {
       date: moment().format('YYYY-MM-DD HH:mm:ss')
     }))
 
-    if (self.publishHandlers && self.publishHandlers.hasOwnProperty(command)) {
-      self.publishHandlers[command].call(self, data)
+    if (this.publishHandlers && this.publishHandlers.hasOwnProperty(command)) {
+      this.publishHandlers[command].call(this, data)
     } else {
-      self.io.of(namespace).to(data.room || data.command).emit(data.command, data.data)
+      this.io.of(namespace).to(data.room || data.command).emit(data.command, data.data)
     }
-  },
-  disconnect: function (reason) {
-    const self = this
+  }
 
-    console.log('客户端：' + self.socket.id + '断开连接')
+  disconnect (reason) {
+    console.log('客户端：' + this.socket.id + '断开连接')
 
-    redis.rpush('logs:disconnect:socket:' + self.socket.id, JSON.stringify({
-      namespace: self.namespace,
+    redis.rpush('logs:disconnect:socket:' + this.socket.id, JSON.stringify({
+      namespace: this.namespace,
       reason: reason,
       date: moment().format('YYYY-MM-DD HH:mm:ss')
     }))
   }
 }
+
+module.exports = SocketBaseHandler

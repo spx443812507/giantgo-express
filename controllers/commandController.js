@@ -1,24 +1,27 @@
 const redis = require('../db/redis')
-const io = require('socket.io-emitter')(require('../config/config').redis)
+const config = require('../config/config')
+const emitter = require('socket.io-emitter')
 
-function CommandController () {
+class CommandController {
+  constructor () {
+    this.io = emitter(config.redis)
+  }
 
-}
+  broadcast (req, res) {
+    const command = req.body.command
+    const room = req.body.room
+    const namespace = req.body.namespace
+    const data = req.body.data
 
-CommandController.prototype.broadcast = function (req, res, next) {
-  const command = req.body.command
-  const room = req.body.room
-  const namespace = req.body.namespace
-  const data = req.body.data
+    try {
+      this.io.of(namespace || '/').to(room || command).emit(command, data)
 
-  try {
-    io.of(namespace || '/').to(room || command).emit(command, data)
+      redis.rpush('logs:command:' + command, JSON.stringify(data))
 
-    redis.rpush('logs:command:' + command, JSON.stringify(data))
-
-    res.json('success')
-  } catch (e) {
-    res.send(e)
+      res.json('success')
+    } catch (e) {
+      res.send(e)
+    }
   }
 }
 

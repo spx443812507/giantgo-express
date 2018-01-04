@@ -3,7 +3,6 @@ const config = require('../config/config')
 
 const promise = mongoose.createConnection(config.mongo, {
   useMongoClient: true
-  /* other options */
 })
 promise.then(db => {
   console.log('MongoDB连接成功！！')

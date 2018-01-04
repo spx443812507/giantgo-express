@@ -1,20 +1,19 @@
-const socketBaseHandler = require('./socketBaseHandler')
+const SocketBaseHandler = require('./socketBaseHandler')
 
-function WebinarController (socket) {
-  const self = this
+class WebinarController extends SocketBaseHandler {
+  constructor (socket) {
+    super(socket)
+    this.onConnection(socket)
+    
+    this.subscribeHandlers.userJoin = function (data) {
+    }
 
-  self.onConnection(socket)
+    this.publishHandlers.userJoin = function (data) {
+      const self = this
 
-  self.subscribeHandlers.userJoin = function (data) {
-  }
-
-  self.publishHandlers.userJoin = function (data) {
-    const self = this
-
-    self.io.of(self.namespace).to(data.room || data.command).emit(data.command, data.data)
+      self.io.of(self.namespace).to(data.room || data.command).emit(data.command, data.data)
+    }
   }
 }
-
-WebinarController.prototype = socketBaseHandler
 
 module.exports = WebinarController
