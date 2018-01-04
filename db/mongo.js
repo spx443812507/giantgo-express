@@ -1,5 +1,12 @@
 const mongoose = require('mongoose')
+const config = require('../config/config')
 
-mongoose.connect('mongodb://localhost/giantgo')
-
-module.exports = mongoose
+const promise = mongoose.createConnection(config.mongo, {
+  useMongoClient: true
+  /* other options */
+})
+promise.then(db => {
+  console.log('MongoDB连接成功！！')
+}, (err) => {
+  console.error.bind(console, '连接错误：' + err)
+})

@@ -8,5 +8,7 @@ module.exports = {
     database: 'giantgo',
     connectionLimit: 100
   },
-  redis: 'redis://user:sino@123@localhost:6379/2'
+  redis: 'redis://user:sino@123@localhost:6379/2',
+  mongo: 'mongodb://localhost/giantgo',
+  jwtSecret: 'Pass@word1'
 }
