@@ -1,10 +1,16 @@
-const SocketFactory = require('./socketFactory')
-const socketFactory = new SocketFactory()
+const config = require('./config/config')
+const SocketFactory = require('./socket')
+const applications = require('./commands')
 
-const webinarController = require('./controllers/webinarController')
-const rootController = require('./controllers/rootController')
+const socketFactory = new SocketFactory(config.redis, config.socketPath)
 
-socketFactory.use('/', rootController)
-socketFactory.use('/webinar', webinarController)
+socketFactory.set('redisUrl', config.redis)
+socketFactory.set('socketPath', config.socketPath)
+
+for (const application in applications) {
+  if (applications.hasOwnProperty(application)) {
+    socketFactory.use(applications[application])
+  }
+}
 
 module.exports = socketFactory

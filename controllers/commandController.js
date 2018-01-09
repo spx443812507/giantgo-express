@@ -1,26 +1,18 @@
-const redis = require('../db/redis')
-const config = require('../config/config')
-const emitter = require('socket.io-emitter')
+const commands = require('../commands')
 
 class CommandController {
   constructor () {
-    this.io = emitter(config.redis)
   }
 
-  broadcast (req, res) {
-    const command = req.body.command
-    const room = req.body.room
-    const namespace = req.body.namespace
-    const data = req.body.data
-
+  static broadcast (req, res) {
     try {
-      this.io.of(namespace || '/').to(room || command).emit(command, data)
-
-      redis.rpush('logs:command:' + command, JSON.stringify(data))
-
+      const namespace = req.body.namespace || '/'
+      if (commands.hasOwnProperty(namespace)) {
+        commands[namespace].publish(req.body)
+      }
       res.json('success')
     } catch (e) {
-      res.send(e)
+      res.send(e.message)
     }
   }
 }
