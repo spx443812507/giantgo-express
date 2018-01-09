@@ -7,7 +7,7 @@
 const app = require('../app')
 const debug = require('debug')('giantgo-express:server')
 const http = require('http')
-const config = require('../config/config')
+const config = require('../config')
 const socketApp = require('../socketApp')
 
 /**

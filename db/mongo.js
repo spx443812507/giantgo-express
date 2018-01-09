@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
-const config = require('../config/config')
-
+const config = require('../config')
+mongoose.Promise = global.Promise;
 const promise = mongoose.createConnection(config.mongo, {
   useMongoClient: true
 })

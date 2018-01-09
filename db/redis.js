@@ -1,5 +1,5 @@
 const redis = require('redis')
-const redisConfig = require('../config/config').redis
-const client = redis.createClient(redisConfig)
+const config = require('../config')
+const client = redis.createClient(config.redis)
 
 module.exports = client

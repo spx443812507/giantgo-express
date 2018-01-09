@@ -1,5 +1,5 @@
 const SocketFactory = require('../../socket')
-const config = require('../../config/config')
+const config = require('../../config')
 const redis = require('../../db/redis')
 
 class UserJoinCommand extends SocketFactory.Commander {
