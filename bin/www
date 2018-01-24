@@ -10,6 +10,8 @@ const http = require('http')
 const config = require('../config')
 const socketApp = require('../socketApp')
 
+http.globalAgent.maxSockets = Infinity
+
 /**
  * Get port from environment and store in Express.
  */

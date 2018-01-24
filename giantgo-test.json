@@ -1,6 +1,6 @@
 {
   "config": {
-    "target": "ws://localhost",
+    "target": "ws://47.95.20.111",
     "socketio": {
       "query": "",
       "path": "/socketio/socket.io"
