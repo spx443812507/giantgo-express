@@ -7,7 +7,7 @@
     },
     "phases": [
       {
-        "duration": 300,
+        "duration": 600,
         "arrivalRate": 10
       }
     ]
@@ -43,7 +43,7 @@
           }
         },
         {
-          "think": 310
+          "think": 610
         }
       ]
     }

@@ -20,16 +20,16 @@ class Application {
     for (const commander in this.commanders) {
       if (this.commanders.hasOwnProperty(commander)) {
         socket.on(commander, data => {
-          this.commanders[commander].handle.call(this.commanders[commander], data, socket)
+          this.commanders[commander].handle(data, socket)
         })
       }
     }
 
     socket.on('subscribe', data => {
-      this.subscribe.call(this, data, socket)
+      this.subscribe(data, socket)
     })
     socket.on('publish', data => {
-      this.publish.call(this, data, socket)
+      this.publish(data, socket)
     })
   }
 
@@ -50,7 +50,7 @@ class Application {
     socket.join(room)
 
     if (this.commanders && this.commanders.hasOwnProperty(command) && typeof this.commanders[command].subscribe === 'function') {
-      this.commanders[command].subscribe.call(this.commanders[command], data, socket)
+      this.commanders[command].subscribe(data, socket)
     }
   }
 
@@ -72,7 +72,7 @@ class Application {
     }
 
     if (this.commanders && this.commanders.hasOwnProperty(command) && typeof this.commanders[command].publish === 'function') {
-      this.commanders[command].publish.call(this.commanders[command], data, socket)
+      this.commanders[command].publish(data, socket)
     }
   }
 }
