@@ -3,6 +3,8 @@ const emitter = require('socket.io-emitter')
 class Commander {
   constructor (redisUrl) {
     this.io = emitter(redisUrl)
+    this.namespace = undefined
+    this.command = undefined
   }
 
   handle () {

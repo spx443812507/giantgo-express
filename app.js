@@ -3,12 +3,11 @@ const path = require('path')
 const logger = require('morgan')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
-
+const mongoose = require('mongoose')
 const router = require('./routes')
+const config = require('./config')
 
 const app = express()
-
-require('./db/mongo')
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
@@ -22,6 +21,13 @@ app.use(bodyParser.urlencoded({
 }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
+
+mongoose.Promise = global.Promise
+mongoose.connect(config.mongo)
+mongoose.connection.on('error', console.error.bind(console, 'connection error:'))
+mongoose.connection.once('open', function () {
+  console.log('MongoDB连接成功！！')
+})
 
 router(app)
 

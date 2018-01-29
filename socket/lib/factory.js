@@ -20,12 +20,12 @@ class Factory {
     this.io = io(server, {
       path: this.settings.socketPath
     })
-    //配置socket.io-redis数据库
+    // 配置socket.io-redis数据库
     this.io.adapter(redis(this.settings.redisUrl))
 
     _.forEach(this.applications, app => {
       this.io.of(app.namespace).on('connection', function (socket) {
-        app.onConnection.call(app, socket)
+        app.onConnection(socket)
       })
     })
   }

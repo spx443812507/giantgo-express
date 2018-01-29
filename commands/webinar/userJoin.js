@@ -1,6 +1,5 @@
 const SocketFactory = require('../../socket')
 const config = require('../../config')
-const redis = require('../../db/redis')
 
 class UserJoinCommand extends SocketFactory.Commander {
   constructor () {
@@ -12,4 +11,4 @@ class UserJoinCommand extends SocketFactory.Commander {
   }
 }
 
-module.exports = new UserJoinCommand()
+module.exports = UserJoinCommand

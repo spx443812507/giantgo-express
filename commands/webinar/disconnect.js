@@ -1,6 +1,5 @@
 const SocketFactory = require('../../socket')
 const config = require('../../config')
-const redis = require('../../db/redis')
 
 class DisconnectCommand extends SocketFactory.Commander {
   constructor () {
@@ -12,4 +11,4 @@ class DisconnectCommand extends SocketFactory.Commander {
   }
 }
 
-module.exports = new DisconnectCommand()
+module.exports = DisconnectCommand

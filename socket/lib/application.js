@@ -1,6 +1,6 @@
 class Application {
   constructor (namespace) {
-    if (!namespace || typeof(namespace) !== 'string') {
+    if (!namespace || typeof (namespace) !== 'string') {
       throw new TypeError('namespace requires string')
     }
 
@@ -8,53 +8,62 @@ class Application {
     this.commanders = {}
   }
 
-  command (cmd, commander) {
+  command (cmd, Commander) {
     if (!this.commanders.hasOwnProperty(cmd)) {
+      const commander = new Commander()
+      commander.command = cmd
+      commander.nsp = commander.io.of(this.namespace)
+
       this.commanders[cmd] = commander
     }
   }
 
   onConnection (socket) {
-    console.log('客户端：' + socket.id + '已连接，命名空间' + socket.nsp.name)
+    console.log('客户端：' + socket.id + ' 已连接，命名空间' + socket.nsp.name)
 
     for (const commander in this.commanders) {
       if (this.commanders.hasOwnProperty(commander)) {
-        socket.on(commander, data => {
-          this.commanders[commander].handle(data, socket)
+        socket.on(commander, (data, fn) => {
+          this.commanders[commander].handle(data, socket, fn)
         })
       }
     }
 
-    socket.on('subscribe', data => {
-      this.subscribe(data, socket)
+    socket.on('error', (error) => {
+      this.onError(error)
     })
-    socket.on('publish', data => {
-      this.publish(data, socket)
+
+    socket.on('subscribe', (data, fn) => {
+      this.subscribe(data, socket, fn)
+    })
+    socket.on('publish', (data, fn) => {
+      this.publish(data, socket, fn)
     })
   }
 
-  subscribe (data, socket) {
+  onError (error) {
+    console.log(error)
+  }
+
+  subscribe (data, socket, fn) {
     if (Object.prototype.toString.call(data) === '[object String]') {
       try {
         data = JSON.parse(data)
       } catch (e) {
-        throw new Error('param format is not correct (example: {room: "room1", command: "userJoin", namespace: "/"})')
+        throw new Error('param format is not correct (example: {command: "userJoin"})')
       }
     }
 
     const command = data.command
-    const room = data.room || command
 
     console.log('客户端：' + socket.id + ' 订阅命令：' + data.command)
 
-    socket.join(room)
-
     if (this.commanders && this.commanders.hasOwnProperty(command) && typeof this.commanders[command].subscribe === 'function') {
-      this.commanders[command].subscribe(data, socket)
+      this.commanders[command].subscribe(data, socket, fn)
     }
   }
 
-  publish (data, socket = undefined) {
+  publish (data, socket, fn) {
     if (Object.prototype.toString.call(data) === '[object String]') {
       try {
         data = JSON.parse(data)
@@ -72,7 +81,7 @@ class Application {
     }
 
     if (this.commanders && this.commanders.hasOwnProperty(command) && typeof this.commanders[command].publish === 'function') {
-      this.commanders[command].publish(data, socket)
+      this.commanders[command].publish(data, socket, fn)
     }
   }
 }

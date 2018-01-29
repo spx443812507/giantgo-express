@@ -1,6 +1,6 @@
 const SocketFactory = require('../../socket')
-const userJoinCommand = require('./userJoinCommand')
-const disconnectCommand = require('./disconnectCommand')
+const userJoinCommand = require('./userJoin')
+const disconnectCommand = require('./disconnect')
 
 const Application = SocketFactory.Application
 const webinarApplication = new Application('/webinar')
