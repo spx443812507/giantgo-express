@@ -14,12 +14,14 @@ class UserService {
 
       user.password = hash(user.password)
 
-      user.save((err, user) => {
-        if (err) {
-          reject(err)
-        }
+      User.init().then(() => {
+        user.save((error, user) => {
+          if (error) {
+            reject(error)
+          }
 
-        resolve(user)
+          resolve(user)
+        })
       })
     })
   }

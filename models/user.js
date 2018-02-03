@@ -2,8 +2,14 @@ const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
   name: String,
-  email: String,
-  mobile: String,
+  email: {
+    type: String,
+    unique: true
+  },
+  mobile: {
+    type: String,
+    unique: true
+  },
   company: String,
   password: String,
   created_at: {
@@ -11,6 +17,7 @@ const userSchema = new mongoose.Schema({
     default: Date.now
   },
   updated_at: Date,
+  sign_in_ip: String,
   last_sign_in_at: Date
 })
 

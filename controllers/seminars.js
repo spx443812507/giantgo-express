@@ -10,9 +10,10 @@ class SeminarController {
 
     this.seminarService.create(seminarInfo).then(seminar => {
       res.status(201).json(seminar)
-    }).catch(err => {
+    }).catch(error => {
       res.status(400).json({
-        msg: err
+        error: error.errors,
+        message: error.message
       })
     })
   }

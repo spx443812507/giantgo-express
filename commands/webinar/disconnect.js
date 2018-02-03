@@ -4,8 +4,6 @@ const config = require('../../config')
 class DisconnectCommand extends SocketFactory.Commander {
   constructor () {
     super(config.redis)
-
-    this.debounce = 3000
   }
 
   handle (data, socket = undefined) {

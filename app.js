@@ -4,6 +4,7 @@ const logger = require('morgan')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
+const jwt = require('express-jwt')
 const router = require('./routes')
 const config = require('./config')
 
@@ -21,6 +22,19 @@ app.use(bodyParser.urlencoded({
 }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
+
+app.use(jwt({
+  secret: config.jwtSecret,
+  credentialsRequired: false,
+  getToken: function fromHeaderOrQuerystring (req) {
+    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+      return req.headers.authorization.split(' ')[1]
+    } else if (req.query && req.query.token) {
+      return req.query.token
+    }
+    return null
+  }
+}))
 
 mongoose.Promise = global.Promise
 mongoose.connect(config.mongo)
