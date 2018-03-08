@@ -3,10 +3,10 @@ const router = express.Router()
 const UserController = require('../controllers/users')
 const userController = new UserController()
 
-router.post('/sign_up', function (req, res) {
+router.post('/session', function (req, res) {
   userController.signUp(req, res)
 })
-router.post('/sign_in', function (req, res) {
+router.patch('/session', function (req, res) {
   userController.signIn(req, res)
 })
 router.put('/:user_id', function (req, res) {

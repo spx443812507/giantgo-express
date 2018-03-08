@@ -27,28 +27,12 @@ const schema = new mongoose.Schema({
       message: 'end_after_start'
     }
   },
-  // 地址
-  address: String,
-  // 报名人数
-  register_number: Number,
-  // 报名关闭时间
-  register_closed_at: Date,
-  // 是否需要审核
-  need_audit: Boolean,
   // 删除时间
   deleted_at: Date,
-  agendas: [{
+  seminar: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Agenda'
-  }],
-  speakers: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Speaker'
-  }],
-  checkins: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Checkin'
-  }]
+    ref: 'Seminar'
+  }
 }, {
   timestamps: {
     createdAt: 'created_at',
@@ -56,6 +40,6 @@ const schema = new mongoose.Schema({
   }
 })
 
-const Seminar = mongoose.model('Seminar', schema)
+const Agenda = mongoose.model('Agenda', schema)
 
-module.exports = Seminar
+module.exports = Agenda
