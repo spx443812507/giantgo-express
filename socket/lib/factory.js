@@ -25,7 +25,7 @@ class Factory {
     })
     // 配置socket.io-redis数据库
     this.io.adapter(redis(this.settings.redisUrl))
-
+    // 根据文件夹目录获取命名空间
     const namespaces = glob.sync('**/', {
       cwd: this.settings.commands
     })
@@ -36,10 +36,10 @@ class Factory {
       const commands = glob.sync('**/*.js', {
         cwd: path.join(this.settings.commands, nsp)
       })
-
+      // 根据文件注册command
       _.forEach(commands, command => {
         const commandPath = path.join(this.settings.commands, file, command)
-        application.command(path.basename(file, '.js'), require(path.resolve(commandPath)))
+        application.command(path.basename(command, '.js'), require(path.resolve(commandPath)))
       })
 
       this.use(application)
@@ -52,12 +52,16 @@ class Factory {
     })
   }
 
+  /**
+   * 设置基础配置
+   * @param {*} setting
+   * @param {*} val
+   */
   set (setting, val) {
     if (arguments.length === 1) {
       return this.settings[setting]
     }
 
-    // set value
     this.settings[setting] = val
 
     return this
@@ -74,6 +78,20 @@ class Factory {
 
     if (!this.applications.hasOwnProperty(application.namespace)) {
       this.applications[application.namespace] = application
+    }
+  }
+
+  /**
+   * 根据命名空间获取应用
+   * @param {*} nsp 命名空间
+   */
+  getApplication (nsp) {
+    if (nsp && nsp.indexOf('/') !== 0) {
+      nsp = '/' + nsp
+    }
+
+    if (this.applications.hasOwnProperty(nsp)) {
+      return this.applications[nsp]
     }
   }
 }

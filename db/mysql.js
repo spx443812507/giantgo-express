@@ -1,6 +1,6 @@
 const mysql = require('mysql')
-const mysqlConfig = require('../config').mysql
-const pool = mysql.createPool(mysqlConfig)
+const config = require('config')
+const pool = mysql.createPool(config.get('mysql'))
 
 pool.on('connection', function (connection) {
   connection.config.queryFormat = function (query, values) {

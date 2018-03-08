@@ -1,9 +1,9 @@
 const SocketFactory = require('../../socket')
-const config = require('../../config')
+const config = require('config')
 
 class UserJoinCommand extends SocketFactory.Commander {
   constructor () {
-    super(config.redis)
+    super(config.get('redis'))
   }
 
   handle (data, socket) {

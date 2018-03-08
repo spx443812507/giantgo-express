@@ -7,7 +7,7 @@
 const app = require('../app')
 const debug = require('debug')('giantgo-express:server')
 const http = require('http')
-const config = require('../config')
+const config = require('config')
 const socketApp = require('../socketApp')
 
 http.globalAgent.maxSockets = Infinity
@@ -16,7 +16,7 @@ http.globalAgent.maxSockets = Infinity
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(process.env.PORT || config.port) + (process.env.NODE_APP_INSTANCE || '0')
+const port = normalizePort(process.env.PORT || config.get('port')) + (process.env.NODE_APP_INSTANCE || '0')
 
 app.set('port', port)
 

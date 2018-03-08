@@ -1,6 +1,6 @@
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
-const config = require('../config')
+const config = require('config')
 const User = require('../models/user')
 
 const hash = password => {
@@ -42,7 +42,7 @@ class UserService {
 
         const token = jwt.sign({
           user_id: user._id
-        }, config.jwtSecret)
+        }, config.get('jwtSecret'))
 
         resolve(token)
       })
@@ -53,7 +53,7 @@ class UserService {
       this.create(userInfo).then(user => {
         const token = jwt.sign({
           user_id: user._id
-        }, config.jwtSecret)
+        }, config.get('jwtSecret'))
 
         resolve(token)
       }).catch(err => {

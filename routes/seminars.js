@@ -3,20 +3,10 @@ const router = express.Router()
 const SeminarController = require('../controllers/seminars')
 const seminarController = new SeminarController()
 
-router.post('/', function (req, res) {
-  seminarController.create(req, res)
-})
-router.put('/:seminar_id', function (req, res) {
-  seminarController.update(req, res)
-})
-router.delete('/:seminar_id', function (req, res) {
-  seminarController.remove(req, res)
-})
-router.get('/', function (req, res) {
-  seminarController.all(req, res)
-})
-router.get('/:seminar_id', function (req, res) {
-  seminarController.get(req, res)
-})
+router.post('/', seminarController.create.bind(seminarController))
+router.put('/:seminar_id', seminarController.update.bind(seminarController))
+router.delete('/:seminar_id', seminarController.remove.bind(seminarController))
+router.get('/', seminarController.all.bind(seminarController))
+router.get('/:seminar_id', seminarController.get.bind(seminarController))
 
 module.exports = router

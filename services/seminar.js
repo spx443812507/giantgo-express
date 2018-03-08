@@ -1,3 +1,4 @@
+const errors = require('../errors')
 const Seminar = require('../models/seminar')
 
 class SeminarService {
@@ -7,7 +8,7 @@ class SeminarService {
 
       seminar.save((err, seminar) => {
         if (err) {
-          reject(err)
+          reject(new errors.ValidationError(400, err))
         }
 
         resolve(seminar)

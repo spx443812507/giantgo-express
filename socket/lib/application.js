@@ -1,3 +1,6 @@
+const logger = require('log4js').getLogger('application')
+const _ = require('lodash')
+
 class Application {
   constructor (namespace) {
     if (!namespace || typeof (namespace) !== 'string') {
@@ -19,7 +22,7 @@ class Application {
   }
 
   onConnection (socket) {
-    console.log('客户端：' + socket.id + ' 已连接，命名空间' + socket.nsp.name)
+    logger.info('客户端：' + socket.id + ' 已连接，命名空间' + socket.nsp.name)
 
     for (const commander in this.commanders) {
       if (this.commanders.hasOwnProperty(commander)) {
@@ -34,51 +37,37 @@ class Application {
     })
 
     socket.on('subscribe', (data, ack) => {
-      this.subscribe(data, socket, ack)
+      if (!_.isObject(data) || !data.hasOwnProperty('command')) {
+        return logger.error('The data you subscibe is not Object or don\'t contain command property')
+      }
+      this.subscribe(data.command, data, socket, ack)
     })
 
     socket.on('publish', (data, ack) => {
-      this.publish(data, socket, ack)
+      if (!_.isObject(data) || !data.hasOwnProperty('command')) {
+        return logger.error('The data you publish is not Object or don\'t contain command property')
+      }
+      this.publish(data.command, data, socket, ack)
     })
   }
 
   onError (error) {
-    console.log(error)
+    logger.info(error)
   }
 
-  subscribe (data, socket, ack) {
-    if (Object.prototype.toString.call(data) === '[object String]') {
-      try {
-        data = JSON.parse(data)
-      } catch (e) {
-        throw new Error('param format is not correct (example: {command: "userJoin"})')
-      }
-    }
-
-    const command = data.command
-
-    console.log('客户端：' + socket.id + ' 订阅命令：' + data.command)
+  subscribe (command, data, socket, ack) {
+    logger.info('客户端：' + socket.id + ' 订阅命令：' + command)
 
     if (this.commanders && this.commanders.hasOwnProperty(command) && typeof this.commanders[command].subscribe === 'function') {
       this.commanders[command].subscribe(data, socket, ack)
     }
   }
 
-  publish (data, socket, ack) {
-    if (Object.prototype.toString.call(data) === '[object String]') {
-      try {
-        data = JSON.parse(data)
-      } catch (e) {
-        throw new Error('param format is not correct (example: {room: "room1", command: "userJoin", namespace: "/"})')
-      }
-    }
-
-    const command = data.command
-
+  publish (command, data, socket, ack) {
     if (socket) {
-      console.log('客户端：' + socket.id + ' 发布命令：' + data.command)
+      logger.info('客户端：' + socket.id + ' 发布命令：' + command)
     } else {
-      console.log('外部发布命令：' + data.command)
+      logger.info('外部发布命令：' + command)
     }
 
     if (this.commanders && this.commanders.hasOwnProperty(command) && typeof this.commanders[command].publish === 'function') {
