@@ -3,23 +3,11 @@ const router = express.Router()
 const UserController = require('../controllers/users')
 const userController = new UserController()
 
-router.post('/session', function (req, res) {
-  userController.signUp(req, res)
-})
-router.patch('/session', function (req, res) {
-  userController.signIn(req, res)
-})
-router.put('/:user_id', function (req, res) {
-  userController.update(req, res)
-})
-router.delete('/:user_id', function (req, res) {
-  userController.remove(req, res)
-})
-router.get('/', function (req, res) {
-  userController.all(req, res)
-})
-router.get('/:user_id', function (req, res) {
-  userController.get(req, res)
-})
+router.post('/session', userController.signUp.bind(userController))
+router.patch('/session', userController.signIn.bind(userController))
+router.put('/:user_id', userController.update.bind(userController))
+router.delete('/:user_id', userController.remove.bind(userController))
+router.get('/', userController.all.bind(userController))
+router.get('/:user_id', userController.get.bind(userController))
 
 module.exports = router

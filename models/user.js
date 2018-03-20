@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
+const mongooseDelete = require('mongoose-delete')
 
-const userSchema = new mongoose.Schema({
+const schema = new mongoose.Schema({
   // 用户名
   name: String,
   // 邮箱
@@ -24,9 +25,7 @@ const userSchema = new mongoose.Schema({
   // 登录ip
   sign_in_ip: String,
   // 最后登录时间
-  last_sign_in_at: Date,
-  // 删除时间
-  deleted_at: Date
+  last_sign_in_at: Date
 }, {
   timestamps: {
     createdAt: 'created_at',
@@ -34,6 +33,8 @@ const userSchema = new mongoose.Schema({
   }
 })
 
-const User = mongoose.model('User', userSchema)
+schema.plugin(mongooseDelete)
+
+const User = mongoose.model('User', schema)
 
 module.exports = User

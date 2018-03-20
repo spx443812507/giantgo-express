@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongooseDelete = require('mongoose-delete')
 
 const schema = new mongoose.Schema({
   // 会议名称
@@ -27,8 +28,6 @@ const schema = new mongoose.Schema({
       message: 'end_after_start'
     }
   },
-  // 删除时间
-  deleted_at: Date,
   seminar: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Seminar'
@@ -39,6 +38,8 @@ const schema = new mongoose.Schema({
     updatedAt: 'update_at'
   }
 })
+
+schema.plugin(mongooseDelete)
 
 const Agenda = mongoose.model('Agenda', schema)
 

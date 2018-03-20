@@ -8,7 +8,7 @@ class SeminarService {
 
       seminar.save((err, seminar) => {
         if (err) {
-          reject(new errors.ValidationError(400, err))
+          return reject(new errors[err.name](err))
         }
 
         resolve(seminar)

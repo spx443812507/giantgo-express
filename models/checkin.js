@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongooseDelete = require('mongoose-delete')
 
 const schema = new mongoose.Schema({
   // 签到点名称
@@ -10,8 +11,6 @@ const schema = new mongoose.Schema({
   staff_name: String,
   // 结束时间
   staff_mobile: String,
-  // 删除时间
-  deleted_at: Date,
   seminar: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Seminar'
@@ -22,6 +21,8 @@ const schema = new mongoose.Schema({
     updatedAt: 'update_at'
   }
 })
+
+schema.plugin(mongooseDelete)
 
 const Checkin = mongoose.model('Checkin', schema)
 

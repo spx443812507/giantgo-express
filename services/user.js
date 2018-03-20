@@ -1,6 +1,7 @@
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
 const config = require('config')
+const errors = require('../errors')
 const User = require('../models/user')
 
 const hash = password => {
@@ -14,14 +15,12 @@ class UserService {
 
       user.password = hash(user.password)
 
-      User.init().then(() => {
-        user.save((error, user) => {
-          if (error) {
-            reject(error)
-          }
+      user.save((err, user) => {
+        if (err) {
+          return reject(new errors[err.name](err))
+        }
 
-          resolve(user)
-        })
+        resolve(user)
       })
     })
   }
@@ -37,7 +36,7 @@ class UserService {
         password: hash(password)
       }, (err, user) => {
         if (err) {
-          reject(err)
+          return reject(err)
         }
 
         const token = jwt.sign({
@@ -57,7 +56,7 @@ class UserService {
 
         resolve(token)
       }).catch(err => {
-        reject(err)
+        return reject(err)
       })
     })
   }

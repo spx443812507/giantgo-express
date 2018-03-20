@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const jwt = require('express-jwt')
 const log4js = require('log4js')
+const i18n = require('i18n')
 const logger = log4js.getLogger('app')
 const config = require('config')
 const app = express()
@@ -33,6 +34,20 @@ mongoose.connection.once('open', function () {
   logger.info('MongoDB连接成功！')
 })
 
+i18n.configure({
+  // setup some locales - other locales default to en silently
+  locales: ['en', 'zh'],
+
+  // sets a custom cookie name to parse locale settings from
+  cookie: 'locales',
+
+  // where to store json files - defaults to './locales'
+  directory: path.join(__dirname, 'locales'),
+
+  // you may alter a site wide default locale
+  defaultLocale: 'zh'
+})
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'jade')
@@ -42,6 +57,7 @@ app.use(bodyParser.urlencoded({
 }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
+app.use(i18n.init)
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')

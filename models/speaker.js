@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongooseDelete = require('mongoose-delete')
 
 const schema = new mongoose.Schema({
   // 演讲嘉宾姓名
@@ -10,8 +11,6 @@ const schema = new mongoose.Schema({
   company: String,
   position: String,
   profile: String,
-  // 删除时间
-  deleted_at: Date,
   seminar: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Seminar'
@@ -22,6 +21,8 @@ const schema = new mongoose.Schema({
     updatedAt: 'update_at'
   }
 })
+
+schema.plugin(mongooseDelete)
 
 const Speaker = mongoose.model('Speaker', schema)
 
