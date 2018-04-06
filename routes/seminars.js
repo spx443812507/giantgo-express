@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const SeminarController = require('../controllers/seminars')
+const SeminarController = require('../controllers/seminar')
 const seminarController = new SeminarController()
 
 router.post('/', seminarController.create.bind(seminarController))
