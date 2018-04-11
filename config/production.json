@@ -8,8 +8,8 @@
     "database": "giantgo",
     "connectionLimit": 100
   },
-  "redis": "redis://user:sino@123@localhost:6379/2",
-  "mongo": "mongodb://localhost/giantgo",
+  "redis": "redis://user:123456@localhost:6379/1",
+  "mongo": "mongodb://giantgo:123456@localhost/giantgo",
   "jwtSecret": "Pass@word1",
   "log": {
     "log4jsLevel": "INFO",

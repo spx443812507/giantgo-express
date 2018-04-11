@@ -1,5 +1,5 @@
 const errors = require('../errors')
-const Form = require('../models/Form')
+const Form = require('../models/form')
 
 class FormService {
   create (formInfo) {
@@ -15,9 +15,7 @@ class FormService {
       })
     })
   }
-  update (formId, formInfo) {
-
-  }
+  update (formId, formInfo) {}
   get () {}
   all () {}
   remove () {}
