@@ -38,9 +38,6 @@
 	"unauthorized": "未授权的用户",
 	"start_before_end": "开始时间应大于结束时间",
 	"end_after_start": "结束时间应晚于开始时间",
-	"Path `entity_model` is required.": "Path `entity_model` is required.",
-	"Path `entity_code` is required.": "Path `entity_code` is required.",
-	"Path `entity_name` is required.": "Path `entity_name` is required.",
-	"Cast to Array failed for value \"[ { attribute_code: 'habit2',\n    frontend_input: 'checkbox',\n    frontend_label: '兴趣爱好',\n    description: '用户的兴趣爱好',\n    is_required: false,\n    is_unique: false,\n    options: [ [Object], [Object], [Object] ] } ]\" at path \"attributes\"": "Cast to Array failed for value \"[ { attribute_code: 'habit2',\n    frontend_input: 'checkbox',\n    frontend_label: '兴趣爱好',\n    description: '用户的兴趣爱好',\n    is_required: false,\n    is_unique: false,\n    options: [ [Object], [Object], [Object] ] } ]\" at path \"attributes\"",
-	"Cast to Array failed for value \"[ { attribute_code: 'habit2',\n    frontend_input: 'checkbox',\n    frontend_label: '兴趣爱好',\n    description: '用户的兴趣爱好',\n    is_required: false,\n    is_unique: false } ]\" at path \"attributes\"": "Cast to Array failed for value \"[ { attribute_code: 'habit2',\n    frontend_input: 'checkbox',\n    frontend_label: '兴趣爱好',\n    description: '用户的兴趣爱好',\n    is_required: false,\n    is_unique: false } ]\" at path \"attributes\""
+	"Path `label` is required.": "Path `label` is required.",
+	"mismatch_username_or_password": "用户名或密码不正确"
 }

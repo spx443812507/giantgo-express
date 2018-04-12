@@ -5,18 +5,22 @@ class SeminarController {
     this.seminarService = new SeminarService()
   }
 
-  create (req, res, next) {
-    const seminarInfo = req.body
-
-    this.seminarService.create(seminarInfo).then(seminar => {
+  async create (req, res, next) {
+    try {
+      const seminarInfo = req.body
+      const seminar = await this.seminarService.create(seminarInfo)
       return res.status(201).json(seminar)
-    }).catch(error => {
-      next(error)
-    })
+    } catch (e) {
+      next(e)
+    }
   }
+
   update () {}
+
   get () {}
+
   all () {}
+
   remove () {}
 }
 

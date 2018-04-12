@@ -1,25 +1,23 @@
-const errors = require('../errors')
 const Seminar = require('../models/seminar')
 
 class SeminarService {
-  create (seminarInfo) {
-    return new Promise((resolve, reject) => {
+  async create (seminarInfo) {
+    try {
       const seminar = new Seminar(seminarInfo)
-
-      seminar.save((err, seminar) => {
-        if (err) {
-          return reject(new errors[err.name](err))
-        }
-
-        resolve(seminar)
-      })
-    })
+      return await seminar.save()
+    } catch (e) {
+      throw e
+    }
   }
+
   update (seminarId, seminarInfo) {
 
   }
+
   get () {}
+
   all () {}
+
   remove () {}
 }
 

@@ -8,6 +8,7 @@ const log4js = require('log4js')
 const i18n = require('i18n')
 const logger = log4js.getLogger('app')
 const config = require('config')
+const errors = require('./errors')
 const app = express()
 
 log4js.configure({

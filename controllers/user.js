@@ -5,31 +5,33 @@ class UserController {
     this.userService = new UserService()
   }
 
-  signIn (req, res, next) {
-    const username = req.body.username
-    const password = req.body.password
+  async signIn (req, res, next) {
+    try {
+      const username = req.body.username
+      const password = req.body.password
+      const token = await this.userService.signIn(username, password)
+      return res.status(200).json(token)
+    } catch (e) {
+      next(e)
+    }
+  }
 
-    this.userService.signIn(username, password).then(token => {
-      res.status(200).json({
-        token
-      })
-    }).catch(error => {
-      next(error)
-    })
+  async signUp (req, res, next) {
+    try {
+      const userInfo = req.body
+      const token = await this.userService.signUp(userInfo)
+      return res.status(201).json(token)
+    } catch (e) {
+      next(e)
+    }
   }
-  signUp (req, res, next) {
-    const userInfo = req.body
-    this.userService.signUp(userInfo).then(token => {
-      res.status(201).json({
-        token
-      })
-    }).catch(error => {
-      next(error)
-    })
-  }
+
   update () {}
+
   get () {}
+
   all () {}
+
   remove () {}
 }
 

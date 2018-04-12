@@ -1,23 +1,31 @@
-const errors = require('../errors')
 const Form = require('../models/form')
 
 class FormService {
-  create (formInfo) {
-    return new Promise((resolve, reject) => {
+  async create (formInfo) {
+    try {
       const form = new Form(formInfo)
-
-      form.save((err, form) => {
-        if (err) {
-          return reject(new errors[err.name](err))
-        }
-
-        resolve(form)
-      })
-    })
+      return await form.save()
+    } catch (e) {
+      throw e
+    }
   }
-  update (formId, formInfo) {}
-  get () {}
+
+  async update (formId, formInfo) {
+
+  }
+
+  async get (formId) {
+    try {
+      return await Form.findOne({
+        _id: formId
+      })
+    } catch (e) {
+      throw e
+    }
+  }
+
   all () {}
+
   remove () {}
 }
 

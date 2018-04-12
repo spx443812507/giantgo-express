@@ -5,18 +5,22 @@ class FormController {
     this.formService = new FormService()
   }
 
-  create (req, res, next) {
-    const formInfo = req.body
-
-    this.formService.create(formInfo).then(form => {
+  async create (req, res, next) {
+    try {
+      const formInfo = req.body
+      const form = await this.formService.create(formInfo)
       return res.status(201).json(form)
-    }).catch(error => {
-      next(error)
-    })
+    } catch (e) {
+      next(e)
+    }
   }
+
   update () {}
+
   get () {}
+
   all () {}
+
   remove () {}
 }
 
