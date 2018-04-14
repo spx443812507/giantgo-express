@@ -1,3 +1,4 @@
+const {NotFoundError} = require('../errors')
 const Seminar = require('../models/seminar')
 
 class SeminarService {
@@ -14,7 +15,20 @@ class SeminarService {
 
   }
 
-  get () {}
+  async get (seminarId) {
+    let seminar
+    try {
+      seminar = await Seminar.findById(seminarId)
+    } catch (e) {
+      throw e
+    }
+
+    if (!seminar) {
+      throw new NotFoundError('seminar_not_exists')
+    }
+
+    return seminar
+  }
 
   all () {}
 

@@ -15,9 +15,26 @@ class FormController {
     }
   }
 
-  update () {}
+  async update (req, res, next) {
+    try {
+      const formInfo = req.body
+      const formId = req.params.form_id
+      const form = await this.formService.update(formId, formInfo)
+      return res.status(200).json(form)
+    } catch (e) {
+      next(e)
+    }
+  }
 
-  get () {}
+  async get (req, res, next) {
+    try {
+      const formId = req.params.form_id
+      const form = await this.formService.get(formId)
+      return res.status(200).json(form)
+    } catch (e) {
+      next(e)
+    }
+  }
 
   all () {}
 

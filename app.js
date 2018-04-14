@@ -8,7 +8,6 @@ const log4js = require('log4js')
 const i18n = require('i18n')
 const logger = log4js.getLogger('app')
 const config = require('config')
-const errors = require('./errors')
 const app = express()
 
 log4js.configure({
@@ -34,6 +33,7 @@ mongoose.connection.on('error', console.error.bind(console, 'connection error:')
 mongoose.connection.once('open', function () {
   logger.info('MongoDB连接成功！')
 })
+require('./plugins')(mongoose)
 
 i18n.configure({
   // setup some locales - other locales default to en silently
@@ -94,6 +94,15 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
+
+  if (err && err.code) {
+    err.desc = i18n.__(err.code)
+  }
+
+  if (err.name === 'ValidationError') {
+    err.desc = i18n.__('validation_error')
+  }
+
   // set locals, only providing error in development
   res.locals.message = err.message
   res.locals.error = req.app.get('env') === 'development' ? err : {}

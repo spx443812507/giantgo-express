@@ -7,21 +7,21 @@ const schema = new mongoose.Schema({
   // 邮箱
   email: {
     type: String,
-    unique: true
+    unique: 'email_exists'
   },
   // 手机
   mobile: {
     type: String,
-    unique: true
+    unique: 'mobile_exists'
   },
+  // 公司
+  company: String,
   // 密码
   password: String,
   // 是否验证邮箱
   verified_email: Boolean,
   // 是否验证手机
   verified_mobile: Boolean,
-  // 公司
-  company: String,
   // 登录ip
   sign_in_ip: String,
   // 最后登录时间

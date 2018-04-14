@@ -39,5 +39,9 @@
 	"start_before_end": "开始时间应大于结束时间",
 	"end_after_start": "结束时间应晚于开始时间",
 	"Path `label` is required.": "Path `label` is required.",
-	"mismatch_username_or_password": "用户名或密码不正确"
+	"mismatch_username_or_password": "用户名或密码不正确",
+	"form_not_exists": "表单不存在",
+	"invalid_token": "无效的令牌",
+	"user_object_not_found": "用户未找到",
+	"validation_error": "验证错误"
 }
