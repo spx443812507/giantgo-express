@@ -6,7 +6,7 @@ const userController = new UserController()
 
 router.post('/', userController.signUp.bind(userController))
 router.patch('/', userController.signIn.bind(userController))
-router.put('/', guard.check('admin'), userController.updateMyInfo.bind(userController))
-router.get('/', guard.check('admin'), userController.getMyInfo.bind(userController))
+router.put('/', guard.check('user'), userController.updateMyInfo.bind(userController))
+router.get('/', guard.check('user'), userController.getMyInfo.bind(userController))
 
 module.exports = router

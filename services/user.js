@@ -1,17 +1,23 @@
 const {createHash} = require('crypto')
 const jwt = require('jsonwebtoken')
+const {map, difference} = require('lodash')
 const config = require('config')
 const {ForbiddenError, NotFoundError} = require('../errors')
-const User = require('../models/user')
+const {User, Role} = require('../models')
 
 const hash = password => {
   return createHash('sha1').update(password).digest('base64')
 }
 
+// 获取用户角色所有权限并去重
+const getPermissions = roles => {
+  return difference.apply(this, map(roles, role => map(role.permissions, permission => permission.name))).concat(['user'])
+}
+
 class UserService {
   async create (userInfo) {
     try {
-      const user = new User(userInfo)
+      let user = new User(userInfo)
       user.password = hash(user.password)
       return await user.save()
     } catch (e) {
@@ -68,6 +74,12 @@ class UserService {
         }, {
           mobile: username
         }]
+      }).populate({
+        path: 'roles',
+        populate: {
+          path: 'permissions',
+          select: 'name'
+        }
       })
     } catch (e) {
       throw e
@@ -77,7 +89,7 @@ class UserService {
       return jwt.sign({
         providerId: user.id,
         provider: 'giantgo',
-        permissions: ['admin']
+        permissions: getPermissions(user.roles)
       }, config.get('jwtSecret'))
     } else {
       throw new ForbiddenError('mismatch_username_or_password')
@@ -86,12 +98,27 @@ class UserService {
 
   async signUp (userInfo) {
     try {
-      const user = await this.create(userInfo)
+      let user = new User(userInfo)
+
+      user.password = hash(user.password)
+
+      let role = await Role.findOne({
+        name: 'admin'
+      }).populate({
+        path: 'permissions',
+        select: 'name'
+      })
+
+      if (role) {
+        user.roles.push(role)
+      }
+
+      user = await user.save()
 
       return jwt.sign({
         providerId: user.id,
         provider: 'giantgo',
-        permission: ['admin']
+        permissions: getPermissions(user.roles)
       }, config.get('jwtSecret'))
     } catch (e) {
       throw e

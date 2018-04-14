@@ -25,7 +25,12 @@ const schema = new mongoose.Schema({
   // 登录ip
   sign_in_ip: String,
   // 最后登录时间
-  last_sign_in_at: Date
+  last_sign_in_at: Date,
+  // 用户角色
+  roles: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Role'
+  }]
 }, {
   timestamps: {
     createdAt: 'created_at',

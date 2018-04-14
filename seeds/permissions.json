@@ -1,0 +1,22 @@
+[
+  {
+    "name": "role:create",
+    "display_name": "创建角色",
+    "description": ""
+  },
+  {
+    "name": "role:update",
+    "display_name": "更新角色",
+    "description": ""
+  },
+  {
+    "name": "role:retrieve",
+    "display_name": "查询角色",
+    "description": ""
+  },
+  {
+    "name": "role:delete",
+    "display_name": "删除角色",
+    "description": ""
+  }
+]

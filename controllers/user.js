@@ -1,3 +1,4 @@
+const {UnauthorizedError} = require('../errors')
 const UserService = require('../services/user')
 
 class UserController {
