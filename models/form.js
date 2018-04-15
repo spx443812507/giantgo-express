@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const mongooseDelete = require('mongoose-delete')
+const mongoosePaginate = require('mongoose-paginate')
 
 const optionSchema = new mongoose.Schema({
   label: {
@@ -53,6 +54,7 @@ const formSchema = new mongoose.Schema({
 })
 
 formSchema.plugin(mongooseDelete)
+formSchema.plugin(mongoosePaginate)
 
 const Form = mongoose.model('Form', formSchema)
 

@@ -1,22 +1,52 @@
 [
   {
-    "name": "role:create",
-    "display_name": "创建角色",
+    "name": "role:read",
+    "display_name": "读取角色",
     "description": ""
   },
   {
-    "name": "role:update",
-    "display_name": "更新角色",
+    "name": "role:write",
+    "display_name": "修改角色",
     "description": ""
   },
   {
-    "name": "role:retrieve",
-    "display_name": "查询角色",
+    "name": "user:read",
+    "display_name": "读取用户",
     "description": ""
   },
   {
-    "name": "role:delete",
-    "display_name": "删除角色",
+    "name": "user:write",
+    "display_name": "修改用户",
+    "description": ""
+  },
+  {
+    "name": "form:read",
+    "display_name": "读取表单",
+    "description": ""
+  },
+  {
+    "name": "form:write",
+    "display_name": "修改表单",
+    "description": ""
+  },
+  {
+    "name": "seminar:read",
+    "display_name": "读取线下会",
+    "description": ""
+  },
+  {
+    "name": "seminar:write",
+    "display_name": "编辑线下会",
+    "description": ""
+  },
+  {
+    "name": "speaker:read",
+    "display_name": "读取演讲嘉宾",
+    "description": ""
+  },
+  {
+    "name": "speaker:write",
+    "display_name": "编辑演讲嘉宾",
     "description": ""
   }
 ]

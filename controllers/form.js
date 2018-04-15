@@ -36,7 +36,16 @@ class FormController {
     }
   }
 
-  all () {}
+  async all (req, res, next) {
+    try {
+      const query = req.query
+      let condition = {}
+      let forms = await this.formService.all(condition, query.page, query.limit, query.sort, query.order)
+      return res.status(200).json(forms)
+    } catch (e) {
+      next(e)
+    }
+  }
 
   remove () {}
 }

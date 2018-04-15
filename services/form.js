@@ -39,7 +39,23 @@ class FormService {
     return form
   }
 
-  all () {}
+  async all (condition = {}, page = 1, limit = 15, sortField = 'created_at', order = 'desc') {
+    try {
+      let sort = {}
+
+      if (sortField) {
+        sort[sortField] = order
+      }
+
+      return await Form.paginate(condition, {
+        page: page,
+        limit: parseInt(limit),
+        sort: sort
+      })
+    } catch (e) {
+      throw e
+    }
+  }
 
   remove () {}
 }
